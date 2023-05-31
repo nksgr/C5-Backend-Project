@@ -2,6 +2,7 @@ package com.sweethome.BookingService.entities;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -24,7 +25,7 @@ public class BookingInfoEntity {
     @Column(columnDefinition = "integer default 0")
     private int transactionId;
     @Column
-    private LocalDate bookedOn;
+    private LocalDateTime bookedOn;
 
     public int getBookingId() {
         return bookingId;
@@ -90,11 +91,11 @@ public class BookingInfoEntity {
         this.transactionId = transactionId;
     }
 
-    public LocalDate getBookedOn() {
+    public LocalDateTime getBookedOn() {
         return bookedOn;
     }
 
-    public void setBookedOn(LocalDate bookedOn) {
+    public void setBookedOn(LocalDateTime bookedOn) {
         this.bookedOn = bookedOn;
     }
 

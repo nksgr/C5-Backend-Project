@@ -1,13 +1,17 @@
 package com.sweethome.BookingService.service;
 
+import com.sweethome.BookingService.DTO.PaymentDTO;
 import com.sweethome.BookingService.entities.BookingInfoEntity;
 import com.sweethome.BookingService.DTO.BookingDTO;
 import com.sweethome.BookingService.DAO.BookingDAO;
 import com.sweethome.BookingService.exception.InvalidBooking;
+import com.sweethome.BookingService.feign.PaymentClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,8 @@ public class BookingServiceImpl implements BookingService{
     @Autowired
     BookingDAO bookingDAO;
 
+    @Autowired
+    PaymentClient paymentClient;
 
 
     @Override
@@ -55,6 +61,11 @@ public class BookingServiceImpl implements BookingService{
 
 
 
+    }
+
+    @Override
+    public BookingInfoEntity updateBookingDetails(BookingInfoEntity updatedBooking){
+        return bookingDAO.save(updatedBooking);
     }
 
 
@@ -95,5 +106,34 @@ public class BookingServiceImpl implements BookingService{
 
 
         return roomsList;
+    }
+
+    @Override
+    public BookingInfoEntity confirmPaymentForBooking(int bookingId, PaymentDTO paymentDTO) {
+
+        BookingInfoEntity bookingDetails = getBookingDetailsById(bookingId);
+
+        paymentDTO.setBookingId(bookingId);
+
+        System.out.println(bookingDetails.toString());
+
+        int paymentConfirmed = paymentClient.getPaymentConfirmation(paymentDTO);
+
+        System.out.println(paymentConfirmed);
+
+
+
+        bookingDetails.setTransactionId(paymentConfirmed);
+
+        bookingDetails.setBookedOn(getCurrentDateTime());
+
+
+        return updateBookingDetails(bookingDetails);
+    }
+
+    public LocalDateTime getCurrentDateTime(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        return now;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(value = "/payment")
 public class PaymentController {
 
     // paymentService instance is used to invoke payment related methods
@@ -20,6 +21,11 @@ public class PaymentController {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @GetMapping (value="/test")
+    public ResponseEntity helloPayment(){
+        return new ResponseEntity("The payment controller received your request", HttpStatus.OK);
+    }
 
     // POST API to create transaction and store into Database
     // It will return transaction/payment detail data as a response
@@ -31,7 +37,9 @@ public class PaymentController {
         TransactionDetailsEntity createtransaction = paymentService.makeTransaction(transaction);
         TransactionDTO savedtransactionDTO = modelMapper.map(createtransaction, TransactionDTO.class);
 
-        return new ResponseEntity(savedtransactionDTO, HttpStatus.CREATED);
+        int transactionId = savedtransactionDTO.getTransactionId();
+        System.out.println(transactionId);
+        return new ResponseEntity(transactionId, HttpStatus.CREATED);
 
     }
 

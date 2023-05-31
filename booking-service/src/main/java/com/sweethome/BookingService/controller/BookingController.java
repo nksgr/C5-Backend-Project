@@ -1,6 +1,7 @@
 package com.sweethome.BookingService.controller;
 
 
+import com.sweethome.BookingService.DTO.PaymentDTO;
 import com.sweethome.BookingService.entities.BookingInfoEntity;
 import com.sweethome.BookingService.DTO.BookingDTO;
 import com.sweethome.BookingService.service.BookingService;
@@ -34,6 +35,18 @@ public class BookingController {
         return new ResponseEntity(bookedRooms, HttpStatus.CREATED);
     }
 
+
+    @PostMapping(value = "/booking/{id}/transaction" , consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity confirmBooking(@PathVariable("id") int bookingId, @RequestBody PaymentDTO paymentDTO){
+
+        System.out.println("Recieved Payment Details -> " + paymentDTO + " for the booking Id: " + bookingId ) ;
+
+        BookingInfoEntity confirmedBookingDetails = bookingService.confirmPaymentForBooking(bookingId, paymentDTO);
+
+        System.out.println("Payment confirmed successfully!");
+
+        return new ResponseEntity(confirmedBookingDetails, HttpStatus.CREATED);
+    }
 
 //    need to code feign code and communication part
 
